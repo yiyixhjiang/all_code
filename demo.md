@@ -1,0 +1,646 @@
+# 二分查找
+```
+#include <cstdio>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+int b_search_1(int b[], int n, int key)//求最小的i使得a[i] == key else -1
+{
+    int m, l = 0, r = n - 1;
+    while(l < r)
+    {
+        m = l + ((r - l) >> 1); //取下整
+        if(b[m] < key)
+            l = m + 1;
+        else
+            r = m;
+    }
+    if(b[l] == key) return l;
+    return -1;
+}
+int b_search_2(int b[], int n, int key)
+{
+    int m, l = 0, r = n - 1;
+    while(l < r)
+    {
+        m = l + ((r - l + 1) >> 1); //取上整
+        if(b[m] <= key)
+            l = m;
+        else
+            r = m - 1;
+    }
+    if(b[l] == key) return l;
+    return -1;
+}
+int b_search_3(int b[], int n, int key)//最小的i使得a[i] > key
+{
+    int m, l = 0, r = n - 1;
+    while(l < r)
+    {
+        m = l + ((r - l) >> 1);// 取下整
+        if(b[m] <= key)
+            l = m + 1;
+        else
+            r = m;
+    }
+    if(b[l] > key) return l;
+    return -1;
+}
+int b_search_4(int b[], int n, int key)//最大的i，使得a[i] < key
+{
+    int m, l = 0, r = n - 1;
+    while(l < r)
+    {
+        m = l + ((r + 1 - l) >> 1); // 取上整
+        if(b[m] < key)
+            l = m;
+        else
+            r = m - 1;
+    }
+    if(b[l] < key) return l;
+    return -1;
+}
+int b_sampleSearch_1(int b[], int n, int key)
+{
+    int ret = lower_bound(b,b+n,key) - b;
+    return b[ret] == key && ret < n ? ret : -1;
+}
+int b_sampleSearch_2(int b[], int n, int key)
+{
+    int ret = upper_bound(b,b+n,key) - b;
+    return b[ret - 1] == key && ret > 0 ? ret - 1 : -1;
+}
+int b_sampleSearch_3(int b[], int n, int key)
+{
+    int ret = upper_bound(b,b+n,key) - b;
+    return ret != n ? ret : -1;
+}
+int b_sampleSearch_4(int b[], int n, int key)
+{
+    int ret = lower_bound(b,b+n,key) - b;
+    return ret != 0 ? ret - 1 : -1;
+}
+int main()
+{
+    int a[] = {1,2,3,3,3,4,4,7,7,8,9};
+    int key;
+    while(cin >> key)
+    {
+        cout << b_search_1(a,11,key) << ' '; // 最小的i，使得a[i] == key
+        cout << b_search_2(a,11,key) << ' '; // 最大的i，使得a[i] == key
+        cout << b_search_3(a,11,key) << ' '; // 最小的i，使得a[i] >  key
+        cout << b_search_4(a,11,key) << endl;// 最大的i，使得a[i] <  key
+
+        cout << b_sampleSearch_1(a,11,key) << ' ';
+        cout << b_sampleSearch_2(a,11,key) << ' ';
+        cout << b_sampleSearch_3(a,11,key) << ' ';
+        cout << b_sampleSearch_4(a,11,key) << endl;
+    }
+    return 0;
+}
+```
+### - 例题1：Guess Number Higher or Lower (leetcode 374)
+```
+We are playing the Guess Game. The game is as follows:
+
+I pick a number from 1 to n. You have to guess which number I picked.
+
+Every time you guess wrong, I'll tell you whether the number is higher or lower.
+
+You call a pre-defined API guess(int num) which returns 3 possible results (-1, 1, or 0):
+
+-1 : My number is lower
+ 1 : My number is higher
+ 0 : Congrats! You got it!
+Example:
+n = 10, I pick 6.
+
+Return 6.
+```
+
+```
+class Solution {
+public:
+    int guessNumber(int n) {
+        int l = 0, r = n, m;
+        while(l < r)
+        {
+            m = l + ((r - l) >> 1);
+            int my_guess = guess(m);
+            if(my_guess > 0)
+                l = m + 1;
+            if(my_guess == 0)
+                return m;
+            if(my_guess < 0)
+                r = m;
+        }
+        return l;
+    }
+};
+```
+
+### - 例题2： First Bad Version (leetcode 278)
+
+```
+You are a product manager and currently leading a team to develop a new product. Unfortunately, the latest
+
+version of your product fails the quality check. Since each version is developed based on the previous 
+
+version, all the versions after a bad version are also bad.
+
+Suppose you have n versions [1, 2, ..., n] and you want to find out the first bad one, which causes all the 
+
+following ones to be bad.
+
+You are given an API bool isBadVersion(version) which will return whether version is bad. Implement a 
+
+function to find the first bad version. You should minimize the number of calls to the API.
+
+```
+
+```
+bool isBadVersion(int version);
+
+class Solution {
+public:
+    int firstBadVersion(int n) {
+        int l = 1, r = n, m;
+        while(l < r)
+        {
+            m = l + ((r - l) >> 1);
+            bool flag = isBadVersion(m);
+            if(!flag)
+                l = m + 1;
+            else 
+                r = m;
+        }
+        return l;
+    }
+};
+
+```
+
+### - 例题3：Find Peak Element (leetcode 162)
+
+```
+A peak element is an element that is greater than its neighbors.
+
+Given an input array where num[i] ≠ num[i+1], find a peak element and return its index.
+
+The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.
+
+You may imagine that num[-1] = num[n] = -∞.
+
+For example, in array [1, 2, 3, 1], 3 is a peak element and your function should return the index number 2.
+```
+
+```
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        int l = 0, r = nums.size() - 1, m;
+        while(l < r)
+        {
+            m = l + ((r - l) >> 1);
+            if(nums[m - 1] < nums[m] && nums[m] > nums[m + 1])
+                return m;
+            if(nums[m] < nums[m + 1])
+                l = m + 1;
+            else 
+                r = m;
+        }
+        return l;
+    }
+};
+```
+
+### - 例题4：Search a 2D Matrix (leetcode 74)
+```
+Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+
+Integers in each row are sorted from left to right.
+The first integer of each row is greater than the last integer of the previous row.
+For example,
+
+Consider the following matrix:
+
+[
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+Given target = 3, return true.
+```
+```
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        if(matrix.empty()) 
+            return false;
+        const int m = matrix.size();
+        const int n = matrix.front().size();
+        if(n == 0)
+            return false;
+        int l = 0, r = m * n - 1;
+        while(l < r)
+        {
+            int mid = l + ((r - l) >> 1);
+            int value = matrix[mid / n][mid % n];
+            if(value == target)
+                return true;
+            else if(value < target)
+                l = mid + 1;
+            else 
+                r = mid;
+        }
+        if(matrix[l / n][l % n] == target)
+            return true;
+        return false;
+    }
+};
+```
+
+### - 例题5：Search Insert Position (leetcode 35)
+```
+Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+You may assume no duplicates in the array.
+
+Here are few examples.
+[1,3,5,6], 5 → 2
+[1,3,5,6], 2 → 1
+[1,3,5,6], 7 → 4
+[1,3,5,6], 0 → 0
+
+```
+
+```
+1 class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        return distance(nums.begin(),lower_bound(nums.begin(),nums.end(),target));
+        
+    }
+};
+
+2 class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int l = 0, r = nums.size() - 1, m;
+        while(l < r)
+        {
+            m = l + ((r - l + 1) >> 1);
+            if(nums[m] == target)
+                return m;
+            if(nums[m] < target)
+                l = m;
+            else 
+                r = m - 1;
+        }
+        if(nums[l] < target)
+            return l + 1;
+        else 
+            return l;        
+    }
+};
+
+```
+### - 例题6：Search for a Range (leetcode 34)
+
+```
+Given an array of integers sorted in ascending order, find the starting and ending position of a given target value.
+
+Your algorithm's runtime complexity must be in the order of O(log n).
+
+If the target is not found in the array, return [-1, -1].
+
+For example,
+Given [5, 7, 7, 8, 8, 10] and target value 8,
+return [3, 4].
+
+
+
+```
+```
+1 class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        if(nums.empty())
+            return vector<int> {-1,-1};
+        const int l = distance(nums.begin(),lower_bound(nums.begin(),nums.end(),target));
+        const int r = distance(nums.begin(),prev(upper_bound(nums.begin(),nums.end(),target)));
+        if(l >= nums.size() || nums[l] != target)
+            return vector<int> {-1,-1};
+        else
+            return vector<int> {l,r};
+        
+    }
+};
+2 class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        if(nums.empty())
+            return vector<int> {-1,-1};
+        int left = -1, right = -1;
+        int l = 0, r = nums.size() - 1, m;
+        while(l < r)
+        {
+            m = l + ((r - l) >> 1);
+            if(nums[m] < target)
+                l = m + 1;
+            else 
+                r = m;
+        }
+        if(nums[l] == target)
+            left = l;
+        else 
+            return vector<int> {-1,-1};
+        l = 0, r = nums.size() - 1;
+        while(l < r)
+        {
+            m = l + ((r - l + 1) >> 1);
+            if(nums[m] <= target)
+                l = m;
+            else 
+                r = m - 1;
+        }
+        right = l;
+        return vector<int> {left, right};
+        
+    }
+};
+
+```
+### -例题7：Search in Rotated Sorted Array (leetcode 33)
+```
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+You are given a target value to search. If found in the array return its index, otherwise return -1.
+
+You may assume no duplicate exists in the array.
+
+```
+
+
+```
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        if(nums.empty()) return -1;
+        int l = 0, r = nums.size() - 1, m;
+        while(l < r)
+        {
+            m = l + ((r - l) >> 1);
+            if(nums[m] == target)
+                return m;
+            if(nums[l] <= nums[m])
+            {
+                if(nums[l] <= target && target < nums[m])
+                    r = m;
+                else 
+                    l = m + 1;
+            }
+            else 
+            {
+                if(nums[m] < target && target <= nums[r])
+                    l = m + 1;
+                else 
+                    r = m;
+            }
+        }
+        if(nums[l] == target) return l;
+        return -1;
+    }
+};
+
+```
+
+### - 例题8：HIHO Drinking Game (hihocode 1095)
+> #### 这是一个二分答案例子，将结果二分找寻合适的结果，因为结果也满足单调。
+```
+描述
+Little Hi and Little Ho are playing a drinking game called HIHO. The game comprises N rounds. Each round, Little Hi pours T milliliter of water into Little Ho's cup then Little Ho rolls a K-faces dice to get a random number d among 1 to K. If the remaining water in Little Ho's cup is less than or equal to d milliliter Little Hi gets one score and Little Ho drinks up the remaining water, otherwise Little Ho gets one score and Little Ho drinks exactly d milliliter of water from his cup. After N rounds who has the most scores wins.
+
+Here comes the problem. If Little Ho can predict the number d of N rounds in the game what is the minimum value of T that makes Little Ho the winner? You may assume that no matter how much water is added, Little Ho's cup would never be full.
+
+输入
+The first line contains N(1 <= N <= 100000, N is odd) and K(1 <= K <= 100000).
+The second line contains N numbers, Little Ho's predicted number d of N rounds.
+
+输出
+Output the minimum value of T that makes Little Ho the winner.
+
+样例输入
+5 6
+3 6 6 2 1
+样例输出
+4
+```
+
+```
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+int num[100009];
+int N,K;
+bool fun(int va)
+{
+    int _va = va;
+    int ret = 0;
+    for(int i = 1;i <= N;i ++)
+    {
+        if(num[i] < _va)
+        {
+            ret ++;
+            _va -= num[i];
+            _va += va; 
+        }
+        else
+            _va = va;
+
+    }
+    return ret * 2 > N;
+}
+int main()
+{
+
+    while(cin >> N >> K){
+    for(int i = 1;i <= N;i ++)
+        cin >> num[i];
+    int l,r;
+    l = 1;
+    r = K + 10;
+    while(l < r)
+    {
+        int mid = (l + r) >> 1;
+        if(fun(mid))
+            r = mid;
+        else
+            l = mid + 1;
+    }
+    //if(!fun(l)) l ++;
+    cout << l << endl;
+    }
+    return 0;
+}
+
+```
+
+### -例题9：跳石头 
+https://www.luogu.org/problemnew/show/2678
+```
+题目描述
+
+这项比赛将在一条笔直的河道中进行,河道中分布着一些巨大岩石。组委会已经选择好了两块岩石作为比赛起点和终点。在起点和终点之间,有 N 块岩石(不含起点和终 点的岩石)。在比赛过程中,选手们将从起点出发,每一步跳向相邻的岩石,直至到达 终点。
+
+为了提高比赛难度,组委会计划移走一些岩石,使得选手们在比赛过程中的最短跳 跃距离尽可能长。由于预算限制,组委会至多从起点和终点之间移走 M 块岩石(不能 移走起点和终点的岩石)。
+
+输入第一行包含三个整数 L,N,M,分别表示起点到终点的距离,起点和终 点之间的岩石数,以及组委会至多移走的岩石数。
+
+接下来 N 行,每行一个整数,第 i 行的整数 Di(0 < Di < L)表示第 i 块岩石与 起点的距离。这些岩石按与起点距离从小到大的顺序给出,且不会有两个岩石出现在同 一个位置。
+
+输出只包含一个整数,即最短跳跃距离的最大值。
+输入：
+25 5 2 
+2
+11
+14
+17 
+21
+
+输出：
+4
+
+说明
+
+输入输出样例 1 说明：将与起点距离为 2 和 14 的两个岩石移走后,最短的跳跃距离为 4(从与起点距离 17 的岩石跳到距离 21 的岩石,或者从距离 21 的岩石跳到终点)。
+
+另：对于 20%的数据,0 ≤ M ≤ N ≤ 10。 对于50%的数据,0 ≤ M ≤ N ≤ 100。
+
+对于 100%的数据,0 ≤ M ≤ N ≤ 50,000,1 ≤ L ≤ 1,000,000,000。
+
+```
+
+```
+#include <cstdio>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+int A[50009];
+int L,N,M;
+bool check(int va)
+{
+    int ret = 0, n = 0;
+    for(int i = 1;i <= N+1;i ++)
+    {
+        if(A[i] - ret < va)
+        {
+            n ++;
+        }
+        else
+        {
+            ret = A[i];
+        }
+
+    }
+    if(n <= M) //说明当最短为va时，需要拆去n个岩石，
+        return true;
+    return false;
+
+}
+int main()
+{
+    cin >> L >> N >> M;
+    for(int i = 1;i <= N;i ++)
+    {
+        cin >> A[i];
+    }
+    A[N+1] = L;
+    int l = 1, r = L, m;
+    while(l < r)
+    {
+        m = l + ((r - l + 1) >> 1);
+        if(check(m))
+            l = m;
+        else
+            r = m - 1;
+    }
+    cout << l << endl;
+    return 0;
+}
+
+```
+
+### -例题10：旋转数组中最小的数字 (剑指offer 11)
+
+```
+把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。
+
+输入一个非递减排序的数组的一个旋转，输出旋转数组的最小元素。
+
+例如数组{3,4,5,1,2}为{1,2,3,4,5}的一个旋转，该数组的最小值为1。
+
+
+NOTE：给出的所有元素都大于0，若数组大小为0，请返回0。
+```
+1
+```c++
+class Solution {
+public:
+    int minNumberInRotateArray(vector<int> A) {
+        int l = 0, r = A.size() - 1, m;
+        while(A[l] >= A[r])
+        {
+            if(r - l == 1)
+               return A[r];
+            m = l + ((r - l) >> 1);
+            if(A[l] == A[m] && A[m] == A[r])
+                return Min(l, r, A);
+            if(A[l] <= A[m])
+            {
+                l = m;
+            }
+            else 
+            {
+                r = m;
+            }
+        }
+        return A[l];
+    }
+    int Min(int l, int r, vector<int> A)
+    {
+        int ret = A[l];
+        for(int i = l + 1; i <= r; i ++)
+            ret = min(ret, A[i]);
+        return ret;
+    }
+};
+```
+
+2
+```c++
+class Solution {
+public:
+    int minNumberInRotateArray(vector<int> rotateArray) {
+        int low = 0, high = rotateArray.size()-1;
+        while(low < high)
+        {
+            int mid = low + (high - low) / 2;
+            if(rotateArray[mid] > rotateArray[high])
+            {
+                low = mid + 1;
+            }
+            else if(rotateArray[mid] == rotateArray[high])
+            {
+                high = high -1;
+            }
+            else
+                high = mid;
+        }
+        return rotateArray[low];
+    }
+};
+```
