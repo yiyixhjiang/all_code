@@ -95,6 +95,7 @@
 # 3. 数组中重复的数字
 
 [NowCoder](https://www.nowcoder.com/practice/623a5ac0ea5b4e5f95552655361ae0a8?tpId=13&tqId=11203&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking)
+[leetcode](https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/)
 
 ## 题目描述
 
@@ -157,11 +158,27 @@ public:
     }
 };
 ```
+```c++
+class Solution {
+public:
+    int findRepeatNumber(vector<int>& nums) {
+        int len = nums.size();
+        for (int i = 0; i < len; i ++) {
+            while (nums[i] != i) {
+                if (nums[nums[i]] == nums[i]) 
+                    return nums[i];
+                swap(nums[i], nums[nums[i]]);
+            }
+        }
+        return nums[0];
+    }
+};
+```
 
 # 4. 二维数组中的查找
 
 [NowCoder](https://www.nowcoder.com/practice/abc3fe2ce8e146608e868a70efebf62e?tpId=13&tqId=11154&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking)
-
+[leetcode](https://leetcode-cn.com/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 ## 题目描述
 
 在一个二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
@@ -189,7 +206,7 @@ Given target = 20, return false.
 当前元素的查找区间为左下角的所有元素，例如元素 12 的查找区间如下：
 
 <div align="center"> <img src="../pics//f94389e9-55b1-4f49-9d37-00ed05900ae0.png" width="250"/> </div><br>
-
+"矩阵逆时针旋转 45° ，并将其转化为图形式，发现其类似于 二叉搜索树 ，即对于每个元素，其左分支元素更小、右分支元素更大"
 ```c++
 class Solution {
 public:
@@ -214,6 +231,7 @@ public:
 # 5. 替换空格
 
 [NowCoder](https://www.nowcoder.com/practice/4060ac7e3e404ad1a894ef3e17650423?tpId=13&tqId=11155&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking)
+[leetcode](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/)
 
 ## 题目描述
 
@@ -235,6 +253,8 @@ Output:
 令 P1 指向字符串原来的末尾位置，P2 指向字符串现在的末尾位置。P1 和 P2从后向前遍历，当 P1 遍历到一个空格时，就需要令 P2 指向的位置依次填充 02%（注意是逆序的），否则就填充上 P1 指向字符的值。
 
 从后向前遍是为了在改变 P2 所指向的内容时，不会影响到 P1 遍历原来字符串的内容。
+
+双指针问题待总结[双指针问题](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/solution/cshuang-100dong-hua-zhan-shi-xiang-xi-zhu-shi-by-c/)
 
 ```c++
 class Solution {
