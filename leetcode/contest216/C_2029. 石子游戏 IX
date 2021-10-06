@@ -1,0 +1,27 @@
+[题目](https://leetcode-cn.com/problems/stone-game-ix/)
+思路(https://leetcode-cn.com/problems/stone-game-ix/solution/guan-jian-zai-yu-qiu-chu-hui-he-shu-by-e-mcgv/)
+```c++
+class Solution {
+public:
+    bool check(int a, int b, int c){
+        if (b == 0)
+            return false;
+        b --;
+        int turn = 2 * min(b, c) + 1 + a;
+        if (b - c > 0){
+            b --;
+            turn ++;
+        }
+        cout << turn << endl;
+        return (turn % 2 == 1) && (b != c);
+    }
+    bool stoneGameIX(vector<int>& stones) {
+        vector<int> c = {0,0,0};
+        for (int x : stones){
+            c[x % 3] += 1;
+        }
+        // cout << c[0] << ' ' << c[1] << ' ' << c[2] << endl;
+        return check(c[0], c[1], c[2]) || check(c[0], c[2], c[1]) ;
+    }
+};
+```
