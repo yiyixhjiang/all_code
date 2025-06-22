@@ -1,0 +1,27 @@
+# 检查元素频次是否为质数
+## 出现元素的数量是否都为质数
+## 代码
+```python
+class Solution(object):
+    def checkPrimeFrequency(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+        def isZ(num):
+            for i in range(2, num//2+1):
+                if int(num % i) == 0:
+                    return True
+            return False
+        
+        cnt = [0] * 101
+        for num in nums:
+            cnt[num] += 1
+        # print cnt
+        for c in cnt:
+            if c > 1 and (not isZ(c)):
+                return True
+        return False
+        
+        
+```
